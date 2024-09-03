@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Dimensions, StyleSheet, Text, View } from "react-native";
 import Colors from "../../constants/colors";
 
 function NumberContainer({ children }) {
@@ -11,19 +11,23 @@ function NumberContainer({ children }) {
 
 export default NumberContainer;
 
+// Dimensions API用来获取当前设备的宽高
+// window表示不包含status bar在内的宽高，screen表示包含status bar在内的宽高
+const deviceWidth = Dimensions.get("window").width;
+
 const styles = StyleSheet.create({
   container: {
     borderWidth: 4,
     borderColor: Colors.buttonColor,
-    padding: 24,
-    margin: 24,
+    padding: deviceWidth < 380 ? 12 : 24, // 使用Dimensions API来给不同屏幕大小的设备设置不同的参数
+    margin: deviceWidth < 380 ? 22 : 28,
     borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
   },
   numberText: {
     color: Colors.buttonColor,
-    fontSize: 36,
+    fontSize: deviceWidth < 380 ? 30 : 36,
     fontWeight: "bold",
   },
 });

@@ -1,4 +1,11 @@
-import { Alert, FlatList, StyleSheet, Text, View } from "react-native";
+import {
+  Alert,
+  FlatList,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from "react-native";
 import { useEffect, useRef, useState } from "react";
 
 import Title from "../components/ui/Title";
@@ -24,6 +31,8 @@ function GameScreen({
     userNumber
   );
   const [currentGuess, setCurrentGuess] = useState(initialGuess);
+
+  const { width, height } = useWindowDimensions();
 
   useEffect(() => {
     if (userNumber === currentGuess) {
@@ -68,9 +77,8 @@ function GameScreen({
     setLogs([]);
   }
 
-  return (
-    <View style={styles.gameScreen}>
-      <Title>Opponent's Guess</Title>
+  let content = (
+    <>
       <NumberContainer>{currentGuess}</NumberContainer>
 
       <InstructionText style={styles.instructionText}>
@@ -92,6 +100,45 @@ function GameScreen({
           <PrimaryButton onPress={handleRestart}>Restart</PrimaryButton>
         </View>
       </View>
+    </>
+  );
+
+  // 根据屏幕旋转后width的不同来渲染不同的组件布局
+  if (width > 500) {
+    content = (
+      <>
+        <NumberContainer>{currentGuess}</NumberContainer>
+
+        <InstructionText style={styles.instructionText}>
+          Higher or Lower?
+        </InstructionText>
+
+        <View style={styles.buttonsContainer}>
+          <View style={styles.buttonContainer}>
+            <PrimaryButton onPress={() => handleNextGuess("higher")}>
+              Higher
+            </PrimaryButton>
+          </View>
+          <View style={styles.buttonContainer}>
+            <PrimaryButton onPress={() => handleNextGuess("lower")}>
+              Lower
+            </PrimaryButton>
+          </View>
+          <View style={styles.buttonContainer}>
+            <PrimaryButton onPress={handleRestart}>Restart</PrimaryButton>
+          </View>
+        </View>
+      </>
+    );
+  }
+
+  return (
+    <View style={styles.gameScreen}>
+      <View style={styles.titleContainer}>
+        <Title>Opponent's Guess</Title>
+      </View>
+
+      {content}
 
       <View style={styles.logContainer}>
         <FlatList
@@ -114,6 +161,12 @@ const styles = StyleSheet.create({
   gameScreen: {
     flex: 1,
     padding: 34,
+    alignItems: "center",
+  },
+  titleContainer: {
+    marginTop: 40,
+    maxWidth: "80%",
+    minWidth: 220,
   },
   instructionText: {
     marginBottom: 12,
